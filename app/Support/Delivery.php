@@ -234,11 +234,15 @@ class Delivery
             return null;
         }
 
-        return [
+        $asset = [
             'sourceUrl' => $origin.$urlPath,
             'filename' => $name,
             'mime' => $mime,
-            'dataBase64' => base64_encode($data),
         ];
+        if (strlen($data) <= 256 * 1024) {
+            $asset['dataBase64'] = base64_encode($data);
+        }
+
+        return $asset;
     }
 }

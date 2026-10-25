@@ -2,11 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DeskChrome } from "@/components/DeskChrome";
 import { DeletePost } from "@/components/DeletePost";
+import { Crumbs, JsonLd } from "@/components/Seo";
+import { breadcrumbLd, pageMeta, webPageLd } from "@/lib/seo";
 import { getSettings, listCards } from "@/lib/store";
 import { formatStamp } from "@/lib/text";
 
+const DESCRIPTION = "The Bloghave library of drafts, published stories, and questions, ready to edit or send.";
+const CRUMBS = [{ name: "Home", path: "/" }, { name: "Library", path: "/desk" }];
+
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Library", robots: { index: false, follow: false } };
+export const metadata: Metadata = pageMeta({
+  title: "Library",
+  description: DESCRIPTION,
+  path: "/desk",
+  keywords: ["library", "drafts", "manuscripts"],
+  index: false,
+});
 
 export default async function DeskPage({ searchParams }: { searchParams: Promise<{ kind?: string; status?: string }> }) {
   const query = await searchParams;
@@ -28,6 +39,8 @@ export default async function DeskPage({ searchParams }: { searchParams: Promise
   return (
     <DeskChrome>
       <section className="library wrap">
+        <Crumbs items={CRUMBS} />
+        <JsonLd data={[breadcrumbLd(CRUMBS), webPageLd("Library", DESCRIPTION, "/desk")]} />
         <div className="library-head">
           <div>
             <p className="kicker">Manuscripts</p>

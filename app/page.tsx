@@ -1,11 +1,28 @@
 import Link from "next/link";
 import { PublicFrame } from "@/components/PublicFrame";
+import { JsonLd } from "@/components/Seo";
 import { TypeLine } from "@/components/TypeLine";
 import { Cover } from "@/components/Cards";
+import { itemListLd, organizationLd, pageMeta, websiteLd } from "@/lib/seo";
 import { listCards } from "@/lib/store";
 import { formatStamp } from "@/lib/text";
 
+const COVER_LINES = [
+  "welcome to Fellohtech.com services",
+  "Write it once. It arrives intact.",
+  "Stories and questions, sent intact.",
+];
+
+const HOME_DESCRIPTION = "Write an article or FAQ once on Bloghave. The edited page, the writer, and both dates arrive intact on every linked desk.";
+
 export const dynamic = "force-dynamic";
+export const metadata = pageMeta({
+  title: "Bloghave · Articles and FAQs, sent intact",
+  description: HOME_DESCRIPTION,
+  path: "/",
+  absolute: true,
+  keywords: ["writing desk", "publish articles", "publish FAQs", "linked desks"],
+});
 
 export default function HomePage() {
   const stories = listCards({ kind: "article", publicOnly: true });
@@ -13,11 +30,12 @@ export default function HomePage() {
   const featured = stories.find((story) => story.featured) || stories[0];
   const rest = stories.filter((story) => story.id !== featured?.id).slice(0, 3);
   return (
-    <PublicFrame>
+    <PublicFrame crumbs={[{ name: "Home", path: "/" }]}>
+      <JsonLd data={[websiteLd(HOME_DESCRIPTION), organizationLd(HOME_DESCRIPTION), itemListLd("Stories", "/blog", stories.slice(0, 12).map((story) => ({ name: story.title, path: `/blog/${story.slug}` })))]} />
       <section className="hero wrap">
         <div>
           <p className="kicker">The writing desk</p>
-          <TypeLine />
+          <h1 className="story-title">Write it once. It arrives intact.</h1>
           <p className="lede">Articles and questions are different shapes. Both leave with their type, their pictures, the writer’s name, and the two times the desk stamped itself.</p>
           <div className="hero-actions">
             <Link className="btn btn-primary" href="/desk">Open the desk</Link>
@@ -26,7 +44,12 @@ export default function HomePage() {
         </div>
         {featured ? (
           <Link className="feature-card" href={`/blog/${featured.slug}`}>
-            <Cover src={featured.coverImage} seed={featured.slug} alt="" />
+            <div className="feature-cover">
+              <Cover src={featured.coverImage} seed={featured.slug} alt="" mark={false} />
+              <div className="feature-type">
+                <TypeLine lines={COVER_LINES} className="cover-type" />
+              </div>
+            </div>
             <div className="feature-copy">
               <span className="stamp">{featured.section || "Story"}</span>
               <h2>{featured.title}</h2>

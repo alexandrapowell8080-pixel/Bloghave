@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const LINES = [
-  "Welcome to the house desk.",
-  "Write it once. It arrives intact.",
-  "Stories and questions, sent intact.",
-];
-
-export function TypeLine() {
+export function TypeLine({ lines, className }: { lines: string[]; className?: string }) {
   const [shown, setShown] = useState("");
   const [reduced, setReduced] = useState(false);
 
@@ -28,37 +22,37 @@ export function TypeLine() {
     let timer = 0;
 
     const tick = () => {
-      const full = LINES[line];
+      const full = lines[line] || "";
       if (!deleting) {
         index += 1;
         setShown(full.slice(0, index));
         if (index >= full.length) {
           deleting = true;
-          timer = window.setTimeout(tick, 1500);
+          timer = window.setTimeout(tick, 1600);
           return;
         }
-        timer = window.setTimeout(tick, 68);
+        timer = window.setTimeout(tick, 74);
         return;
       }
       index -= 1;
       setShown(full.slice(0, Math.max(index, 0)));
       if (index <= 0) {
         deleting = false;
-        line = (line + 1) % LINES.length;
-        timer = window.setTimeout(tick, 420);
+        line = (line + 1) % lines.length;
+        timer = window.setTimeout(tick, 460);
         return;
       }
-      timer = window.setTimeout(tick, 36);
+      timer = window.setTimeout(tick, 40);
     };
 
-    timer = window.setTimeout(tick, 480);
+    timer = window.setTimeout(tick, 360);
     return () => window.clearTimeout(timer);
-  }, [reduced]);
+  }, [reduced, lines]);
 
   return (
-    <h1 className="story-title type-line" aria-label={LINES.join(" ")}>
-      <span className="type-text" aria-hidden="true">{reduced ? LINES[0] : shown}</span>
+    <p className={className} aria-label={lines.join(" ")}>
+      <span className="type-text" aria-hidden="true">{reduced ? lines[0] : shown}</span>
       {reduced ? null : <span className="type-caret" aria-hidden="true" />}
-    </h1>
+    </p>
   );
 }

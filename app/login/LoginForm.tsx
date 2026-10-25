@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { Logo } from "@/components/Logo";
+import { SiteFooter } from "@/components/PublicChrome";
 
 export function LoginForm({ hint, nextPath }: { hint: boolean; nextPath: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   return (
+    <>
     <main className="login-screen">
       <form
         className="login-card"
@@ -43,5 +45,7 @@ export function LoginForm({ hint, nextPath }: { hint: boolean; nextPath: string 
         </button>
       </form>
     </main>
+    <SiteFooter />
+    </>
   );
 }

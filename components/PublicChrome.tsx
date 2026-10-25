@@ -49,14 +49,11 @@ export function PublicChrome({
   );
 }
 
-export function SiteFooter({ systemId }: { systemId: string }) {
+export function SiteFooter() {
+  const year = new Date().getFullYear();
   return (
     <footer className="site-footer wrap">
-      <div>
-        <strong>Bloghave</strong>
-        <div>The manuscript leaves whole.</div>
-      </div>
-      <div>This desk · {systemId}</div>
+      <p>© {year} · Developed by <a href="https://fellohtech.com">Fellohtech</a></p>
     </footer>
   );
 }

@@ -14,7 +14,7 @@ export function Avatar({ author, size = 46 }: { author: Byline; size?: number })
   );
 }
 
-export function Cover({ src, seed, alt, className = "cover" }: { src?: string; seed: string; alt: string; className?: string }) {
+export function Cover({ src, seed, alt, className = "cover", mark = true }: { src?: string; seed: string; alt: string; className?: string; mark?: boolean }) {
   if (src) return <img className={className} src={src} alt={alt} />;
   const hue = hueFrom(seed);
   return (
@@ -23,7 +23,7 @@ export function Cover({ src, seed, alt, className = "cover" }: { src?: string; s
       style={{ background: `linear-gradient(145deg, hsl(${hue} 52% 42%), hsl(${hue + 24} 28% 16%))` }}
       aria-hidden={!alt}
     >
-      <span>{(alt || seed).slice(0, 1).toUpperCase()}</span>
+      {mark ? <span>{(alt || seed).slice(0, 1).toUpperCase()}</span> : null}
     </div>
   );
 }

@@ -6,15 +6,29 @@ import { PublicFrame } from "@/components/PublicFrame";
 import { ReadProgress } from "@/components/ReadProgress";
 import { sanitizeContent } from "@/lib/sanitize";
 import { getPostBySlug } from "@/lib/store";
-import { outlineFromHtml, safeJson } from "@/lib/text";
+import { articleLd, metaDescription, pageMeta } from "@/lib/seo";
+import { outlineFromHtml } from "@/lib/text";
+import { JsonLd } from "@/components/Seo";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug, "article");
-  if (!post) return { title: "Story" };
-  return { title: post.title, description: post.excerpt };
+  if (!post) return { title: "Story", robots: { index: false, follow: false } };
+  return pageMeta({
+    title: post.title,
+    description: metaDescription(post.excerpt, `${post.title} by ${post.author.name}, published on Bloghave.`),
+    path: `/blog/${post.slug}`,
+    keywords: [post.section, post.author.name, "article", ...post.tags],
+    image: post.coverImage,
+    article: {
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      authors: [post.author.name],
+      tags: post.tags,
+    },
+  });
 }
 
 export default async function StoryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -23,20 +37,10 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
   if (!found) notFound();
   const contentHtml = sanitizeContent(found.contentHtml);
   const post = { ...found, contentHtml, outline: outlineFromHtml(contentHtml) };
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
-    dateCreated: post.createdAt,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
-    author: { "@type": "Person", name: post.author.name },
-    keywords: post.tags.join(", "),
-  };
   return (
-    <PublicFrame>
+    <PublicFrame crumbs={[{ name: "Home", path: "/" }, { name: "Stories", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]}>
       <ReadProgress />
+      <JsonLd data={articleLd(post)} />
       <div className="layout-read wrap">
         <aside className="outline-list">
           <Link href="/blog">All stories</Link>
@@ -45,7 +49,6 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           ))}
         </aside>
         <div>
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
           <ArticleView post={post} />
         </div>
       </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { SiteFooter } from "./PublicChrome";
 
 const links = [
   { href: "/desk", label: "Library" },
@@ -45,6 +46,7 @@ export function DeskChrome({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       {children}
+      <SiteFooter />
     </div>
   );
 }

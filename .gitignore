@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+data/*.json
+public/uploads/*
+!public/uploads/.gitkeep
+*.log
+.DS_Store
+.vercel
+tsconfig.tsbuildinfo
